@@ -1,24 +1,22 @@
 import logo from './logo.svg';
+import TimeProvider from './Contexts/TimeContext';
 import './App.css';
+import ScheduleComponent from './Components/ScheduleComponent';
+import tasks from './Data/tasks'
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
+    <TimeProvider>
+      <div className="App">
+        <header className="App-header">
+          <p>
+            IVIS time reporting.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+        </header>
+        <ScheduleComponent />
+      </div>
+    </TimeProvider>
   );
 }
 
