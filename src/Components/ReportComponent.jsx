@@ -1,13 +1,12 @@
-
 import React, { useContext, useState } from 'react';
 import { TimeContext } from '../Contexts/TimeContext';
 
-const ScheduleComponent = () => {
+const ReportComponent = () => {
 
     return (<div>
         <div>
-            <h2>Schedule your week!</h2>
-            <p>IVIS21</p>
+            <p>This is where we let students report time worked</p>
+            <p>Show scheduled times as well!</p>
             <TimeContext.Consumer>
                 {({ scheduled, addScheduledTime, removeScheduledTime }) => (
                     <div>
@@ -32,4 +31,4 @@ const ScheduleComponent = () => {
     </div >
     );
 }
-export default ScheduleComponent;
+export default ReportComponent;

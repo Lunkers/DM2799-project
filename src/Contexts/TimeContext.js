@@ -19,7 +19,7 @@ function TimeProvider(props) {
         addScheduledTime: ({ startTime, endTime, task }) => {
             [startTime, endTime] = startTime < endTime ? [startTime, endTime] : [endTime, startTime] //make sure earliest time is always first
             const hours = (endTime - startTime) / 3.6e6 // get difference in hours between timestamps
-            const quarters = hours / 4
+            const quarters = hours * 4
             setScheduled([...scheduled, {
                 startTime,
                 endTime,

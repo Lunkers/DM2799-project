@@ -1,6 +1,18 @@
 .App {
   text-align: center;
 }
+.app-container {
+  height: 100%;
+  display: flex;
+}
+
+.sidebar {
+  width: 20%;
+}
+
+.main-content {
+  width: 80%;
+}
 
 .App-logo {
   height: 40vmin;
@@ -34,4 +46,17 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+li a {
+  text-decoration: none;
+}
+
+nav {
+  height: 100%;
+  border-right: 0.1em solid black;
 }
