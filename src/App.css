@@ -1,5 +1,8 @@
+@import '~antd/dist/antd.css';
+
 .App {
   text-align: center;
+  padding-top: 5rem;
 }
 .app-container {
   height: 100%;
@@ -8,6 +11,7 @@
 
 .sidebar {
   width: 20%;
+  height: 100%;
 }
 
 .main-content {

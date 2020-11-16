@@ -4,7 +4,7 @@ import './App.css';
 import ScheduleComponent from './Components/ScheduleComponent';
 import VizComponent from './Components/VizView';
 import ReportComponent from './Components/ReportComponent';
-import tasks from './Data/tasks'
+import { Menu } from 'antd';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 function App() {
@@ -15,22 +15,38 @@ function App() {
         <div className="App">
           <div className="app-container">
             <div className="sidebar">
-              <nav>
+              <h2>Time reporter</h2>
+              <Menu mode="inline"
+              style={{height:"100%"}}>
+                <Menu.Item key="1">
+                  <Link to="/">Home</Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link to="/schedule">Schedule</Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link to="/report">Report time worked</Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link to="/viz">Visualizations</Link>
+                </Menu.Item>
+              </Menu>
+              {/* <nav>
                 <ul>
                   <li>
-                    <Link to="/">Home</Link>
+
                   </li>
                   <li>
-                    <Link to="/schedule">Schedule</Link>
+
                   </li>
                   <li>
-                    <Link to="/report">Report time worked</Link>
+
                   </li>
                   <li>
-                    <Link to="/viz">Visualizations</Link>
+
                   </li>
                 </ul>
-              </nav>
+              </nav> */}
             </div>
             <div className="main-content">
               <Switch>

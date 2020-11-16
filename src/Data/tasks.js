@@ -1,12 +1,12 @@
 
 const tasks = {
-    design: [
+    Design: [
         "Designed visual structures",
         "Created visual designs and aestethics",
         "Designed visual mappings",
         "Designed view transformations"
     ],
-    programming: [
+    Programming: [
         "Created webpage",
         "Programmed front end",
         "Programmed back end",

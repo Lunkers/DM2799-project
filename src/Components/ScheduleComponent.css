@@ -1,0 +1,19 @@
+.planner-container{
+    text-align: left;
+    padding-left: 1rem;
+    padding-right: 5em;
+}
+
+.planner-task {
+    background-color: grey;
+}
+
+.category-name {
+    display: flex;
+    justify-content: space-between;
+}
+
+.schedule-task-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}

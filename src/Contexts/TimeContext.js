@@ -6,26 +6,24 @@ export const TimeContext = React.createContext()
 function TimeProvider(props) {
     //some default states for testing purposes
     const [scheduled, setScheduled] = useState([{
-        startTime: new Date("2020-11-09T08:00"),
-        endTime: new Date("2020-11-09T10:00"),
         quarters: 8,
-        task: tasks.programming[1]
+        task: tasks.Programming[1],
+        id: 0
     }])
     const [reported, setReported] = useState([])
+    const [index, setIndex] = useState(1);
 
     const provided = {
         scheduled,
         reported,
-        addScheduledTime: ({ startTime, endTime, task }) => {
-            [startTime, endTime] = startTime < endTime ? [startTime, endTime] : [endTime, startTime] //make sure earliest time is always first
-            const hours = (endTime - startTime) / 3.6e6 // get difference in hours between timestamps
+        addScheduledTime: ({ hours, task }) => {
             const quarters = hours * 4
             setScheduled([...scheduled, {
-                startTime,
-                endTime,
                 quarters,
-                task
+                task,
+                id: index
             }])
+            setIndex(index + 1);
         },
         addReportedTime: ({ startTime, endTime, task }) => {
             [startTime, endTime] = startTime < endTime ? [startTime, endTime] : [endTime, startTime] //make sure earliest time is always first
@@ -38,9 +36,9 @@ function TimeProvider(props) {
                 task
             }])
         },
-        removeScheduledTime: ({ startTime, endTime, task }) => {
-            [startTime, endTime] = startTime < endTime ? [startTime, endTime] : [endTime, startTime] //make sure earliest time is always first
-            setScheduled(scheduled.filter(time => !(time.startTime === startTime && time.endTime === endTime && time.task === task)))
+        removeScheduledTime: ({ id }) => {
+            //[startTime, endTime] = startTime < endTime ? [startTime, endTime] : [endTime, startTime] //make sure earliest time is always first
+            setScheduled(scheduled.filter(time => !(time.id === id)))
         },
         removeReportedTime: ({ startTime, endTime, task }) => {
             [startTime, endTime] = startTime < endTime ? [startTime, endTime] : [endTime, startTime] //make sure earliest time is always first
