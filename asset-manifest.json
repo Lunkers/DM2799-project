@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/lunkers.github.io/dm2799-project/static/css/main.54ee768f.chunk.css",
+    "main.js": "/lunkers.github.io/dm2799-project/static/js/main.638a5606.chunk.js",
+    "main.js.map": "/lunkers.github.io/dm2799-project/static/js/main.638a5606.chunk.js.map",
+    "runtime-main.js": "/lunkers.github.io/dm2799-project/static/js/runtime-main.2abe9216.js",
+    "runtime-main.js.map": "/lunkers.github.io/dm2799-project/static/js/runtime-main.2abe9216.js.map",
+    "static/css/2.2c69b29f.chunk.css": "/lunkers.github.io/dm2799-project/static/css/2.2c69b29f.chunk.css",
+    "static/js/2.7b8a0acd.chunk.js": "/lunkers.github.io/dm2799-project/static/js/2.7b8a0acd.chunk.js",
+    "static/js/2.7b8a0acd.chunk.js.map": "/lunkers.github.io/dm2799-project/static/js/2.7b8a0acd.chunk.js.map",
+    "static/js/3.2f7ff1f9.chunk.js": "/lunkers.github.io/dm2799-project/static/js/3.2f7ff1f9.chunk.js",
+    "static/js/3.2f7ff1f9.chunk.js.map": "/lunkers.github.io/dm2799-project/static/js/3.2f7ff1f9.chunk.js.map",
+    "index.html": "/lunkers.github.io/dm2799-project/index.html",
+    "static/css/2.2c69b29f.chunk.css.map": "/lunkers.github.io/dm2799-project/static/css/2.2c69b29f.chunk.css.map",
+    "static/css/main.54ee768f.chunk.css.map": "/lunkers.github.io/dm2799-project/static/css/main.54ee768f.chunk.css.map",
+    "static/js/2.7b8a0acd.chunk.js.LICENSE.txt": "/lunkers.github.io/dm2799-project/static/js/2.7b8a0acd.chunk.js.LICENSE.txt",
+    "static/media/logo.103b5fa1.svg": "/lunkers.github.io/dm2799-project/static/media/logo.103b5fa1.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.2abe9216.js",
+    "static/css/2.2c69b29f.chunk.css",
+    "static/js/2.7b8a0acd.chunk.js",
+    "static/css/main.54ee768f.chunk.css",
+    "static/js/main.638a5606.chunk.js"
+  ]
+}
