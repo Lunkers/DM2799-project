@@ -2,8 +2,9 @@ import { getDefaultNormalizer } from '@testing-library/react';
 import React, { useState } from 'react';
 import { TimeContext } from '../Contexts/TimeContext';
 import BarChart from './BarChart';
+import SunBurst from './SunburstComponent';
 
-const data = [
+const dataBar = [
   {year: 1980, efficiency: 24.3, sales: 8949000},
   {year: 1985, efficiency: 27.6, sales: 10979000},
   {year: 1990, efficiency: 28, sales: 9303000},
@@ -35,6 +36,8 @@ const data = [
   {year: 2016, efficiency: 37.7, sales: 6873000},
   {year: 2017, efficiency: 39.4, sales: 6081000},
 ]
+
+const dataSun = [ 2, 4, 8, 10 ]
 
 const VizComponent = () => {
     return(
