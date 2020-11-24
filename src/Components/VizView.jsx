@@ -1,6 +1,8 @@
 import { getDefaultNormalizer } from '@testing-library/react';
 import React, { useState } from 'react';
 import { TimeContext } from '../Contexts/TimeContext';
+import BarChart from './BarChart';
+import SunBurst from './SunburstComponent';
 
 const VizComponent = () => {
     return(
@@ -8,7 +10,7 @@ const VizComponent = () => {
             <TimeContext.Consumer>
                 {({getReportedTimesBasedOnTask}) => (
                     <>
-                    {getReportedTimesBasedOnTask()}
+                    <SunBurst data = {getReportedTimesBasedOnTask()} />
                     </>
                 )}
             </TimeContext.Consumer>
