@@ -11,9 +11,16 @@
 .category-name {
     display: flex;
     justify-content: space-between;
+    cursor: pointer;
 }
 
 .schedule-task-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
+
+.container {
+    display: grid;
+    grid-template-columns: 5fr 4fr;
+    margin-right: 5%;
+} 

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import tasks from '../Data/tasks';
+import moment from 'moment';
+import * as d3 from 'd3';
 
 export const TimeContext = React.createContext()
 
@@ -12,20 +14,22 @@ function TimeProvider(props) {
     const provided = {
         scheduled,
         reported,
-        addScheduledTime: ({ hours, task }) => {
-            const quarters = hours * 4
-            setScheduled([...scheduled, {
-                quarters,
-                task,
-                id: index
-            }])
-            setIndex(index + 1);
+        addScheduledTime: (schedule) => {
+            const scheduledWork = schedule.map(item => ({
+                hours: item.hours,
+                task: item.task,
+                quarters: item.hours * 4
+            }))
+            setScheduled(scheduledWork) //overwrite at the moment, why the fuck not?
+            //setIndex(index + 1);
         },
         addReportedTime: (reports) => {
             const newReports = reports.map(report => {
                 //let [startTime, endTime] = startTime < endTime ? [startTime, endTime] : [endTime, startTime] //make sure earliest time is always first
-                const hours = (report.endTime - report.startTime) / 3.6e6 // get difference in hours between timestamps
-                const quarters = hours / 4
+                const startMoment = moment(report.startTime);
+                const endMoment = moment(report.endTime);
+                const duration = moment.duration(endMoment.diff(startMoment))
+                const quarters = Math.round(duration.asHours() * 4)
                 report.quarters = quarters
                 return report
             })
@@ -40,6 +44,12 @@ function TimeProvider(props) {
         removeReportedTime: ({ startTime, endTime, task }) => {
             [startTime, endTime] = startTime < endTime ? [startTime, endTime] : [endTime, startTime] //make sure earliest time is always first
             setScheduled(scheduled.filter(time => time.startTime === startTime && time.endTime === endTime && time.task === task))
+        },
+        getReportedTimesBasedOnTask:() => {
+            // Get reported time grouped on a task basis
+            const grouped = d3.rollup(reported, v => d3.sum(v, d=>d.quarters), d => d.task )
+            console.log(grouped)
+            return grouped;
         }
 
     };

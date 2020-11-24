@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { TimeContext } from '../Contexts/TimeContext';
-import { Button, Calendar, Modal } from 'antd';
-import { TimePicker, TreeSelect, Menu, Divider} from 'antd';
+import { Button, Calendar, Modal, Badge } from 'antd';
+import { TimePicker, TreeSelect, Menu, Divider } from 'antd';
 import tasks from '../Data/tasks';
 import moment from 'moment';
 import { TreeNode } from 'antd/lib/tree-select';
+import { Prompt } from 'react-router-dom'
 
 import './ReportComponent.css'
 const { RangePicker } = TimePicker;
@@ -28,8 +29,8 @@ const ReportComponent = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [reports, setReports] = useState([])
     const [rollingIdx, setRollingIdx] = useState(0);
+    const { reported } = useContext(TimeContext);
     const onDateSelect = (date) => {
-        console.log(date.toDate())
         setSelectedDate(date.toDate())
         setShowModal(true);
     }
@@ -55,7 +56,6 @@ const ReportComponent = () => {
     }
 
     const changeReportTask = (id, task) => {
-        console.log(task)
         const idx = reports.findIndex(report => report.id === id);
         const newReport = {
             ...reports[idx],
@@ -67,7 +67,6 @@ const ReportComponent = () => {
     }
 
     const getReportsFordate = (reports, date) => {
-        console.log(reports)
         const momentDate = moment(date)
         let reportsForDate = reports.filter(report => (report.startTime === null) || (moment(report.startTime).isSame(momentDate, 'day')))
 
@@ -86,19 +85,27 @@ const ReportComponent = () => {
     }
 
     const dateCellRender = (value) => {
-        const reportsForDate = getReportsFordate(reports, value.toDate());
-        return (<ul>
-            {reportsForDate.map(report => <li>{report.task}</li>)}
-            </ul>
+        const reportsForDate = getReportsFordate([...reported, ...reports], value.toDate());
+        reportsForDate.sort((a, b) => a.startTime - b.startTime)
+        //if i sort in a lambda i won't need to write documentation, yeehaw!
+        return (<ul className="events">
+            {reportsForDate.map(report => <li >
+                <div style={{ display: "block", backgroundColor: "green", color: "white", marginBottom: "0.05rem", borderRadius: "5%", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
+                    {`${moment(report.startTime).format("HH:mm")}: ${report.task}`}
+                </div>
+                {/* <Badge text={`${moment(report.startTime).format("HH:mm")}: ${report.task}`} status={'success'}/> */}
+            </li>)}
+        </ul>
         )
     }
 
     return (<div>
         <div className="calendar-container">
-            <p>This is where we let students report time worked</p>
+            <h3>This is where you report time worked</h3>
+            <Prompt when={reports.length > 0} message="You have unsaved changes! Are you sure you want to leave?" />
             <TimeContext.Consumer>
                 {({ reported, addReportedTime }) => (<>
-                    <Calendar onSelect={onDateSelect} dateCellRender={dateCellRender}/>
+                    <Calendar onSelect={onDateSelect} dateCellRender={dateCellRender} />
                     <Modal visible={showModal}
                         onCancel={onCancel}
                         onOk={onOk}
@@ -115,7 +122,7 @@ const ReportComponent = () => {
                         }
                         <Button onClick={() => onAddTask(selectedDate)}>Add task</Button>
                     </Modal>
-                    <Button className="fixed-button" type="primary" onClick={() => addReportedTime(reports)}>Save report</Button>
+                    <Button className="fixed-button" type="primary" onClick={() => { addReportedTime(reports); setReports([]) }}>Save report</Button>
                 </>
                 )}
             </TimeContext.Consumer>

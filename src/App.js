@@ -5,12 +5,12 @@ import ScheduleComponent from './Components/ScheduleComponent';
 import VizComponent from './Components/VizView';
 import ReportComponent from './Components/ReportComponent';
 import { Menu } from 'antd';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 function App() {
 
   return (
-    <Router>
+    <Router basename="/">
       <TimeProvider>
         <div className="App">
           <div className="app-container">
@@ -19,16 +19,16 @@ function App() {
               <Menu mode="inline"
               style={{height:"100%"}}>
                 <Menu.Item key="1">
-                  <Link to="/">Home</Link>
+                  <Link to={"/"}>Home</Link>
                 </Menu.Item>
                 <Menu.Item>
-                  <Link to="/schedule">Schedule</Link>
+                  <Link to={"/schedule"}>Schedule</Link>
                 </Menu.Item>
                 <Menu.Item>
-                  <Link to="/report">Report time worked</Link>
+                  <Link to={"/report"}>Report time worked</Link>
                 </Menu.Item>
                 <Menu.Item>
-                  <Link to="/viz">Visualizations</Link>
+                  <Link to={"/viz"}>Visualizations</Link>
                 </Menu.Item>
               </Menu>
               {/* <nav>
@@ -50,16 +50,16 @@ function App() {
             </div>
             <div className="main-content">
               <Switch>
-                <Route path="/schedule">
+                <Route path={"/schedule"}>
                   <ScheduleComponent />
                 </Route>
-                <Route path="/viz">
+                <Route path={"/viz"}>
                   <VizComponent />
                 </Route>
-                <Route path="/report">
+                <Route path={"/report"}>
                   <ReportComponent />
                 </Route>
-                <Route path="/">
+                <Route path={"/"}>
                   <ScheduleComponent /> {/*If we create a landing page, this should lead there*/}
                 </Route>
               </Switch>
