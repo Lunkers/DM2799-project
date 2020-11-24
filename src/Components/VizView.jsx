@@ -45,7 +45,7 @@ const VizComponent = () => {
             <TimeContext.Consumer>
                 {({getReportedTimesBasedOnTask}) => (
                     <>
-                    {getReportedTimesBasedOnTask()}
+                    <SunBurst data = {getReportedTimesBasedOnTask()} />
                     </>
                 )}
             </TimeContext.Consumer>
