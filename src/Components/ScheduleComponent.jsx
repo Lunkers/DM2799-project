@@ -132,7 +132,7 @@ const ScheduleComponent = () => {
                                                         <strong>Task</strong>
                                                     </span>
                                                     <span>
-                                                        <strong>Planned Time</strong>
+                                                        <strong>Planned Time (Hours)</strong>
                                                     </span>
                                                 </div>
                                                 {tasks[category].map(task => (

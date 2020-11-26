@@ -1,0 +1,10 @@
+.viz-container {
+    margin-top: 3em;
+    margin-right: 5em;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.pie-container {
+    max-height: 10rem;
+}
