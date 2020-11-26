@@ -50,6 +50,12 @@ function TimeProvider(props) {
             const grouped = d3.rollup(reported, v => d3.sum(v, d=>d.quarters), d => d.task )
             console.log(grouped)
             return grouped;
+        },
+        getReportedAndScheduledReduced:() =>{
+            const reportedSum = d3.sum(reported, r => r.quarters)
+            const scheduledSum = d3.sum(scheduled, s => s.quarters)
+
+            return [{type: "Reported", quarters: reportedSum}, {type: "Scheduled", quarters: scheduledSum}]
         }
 
     };

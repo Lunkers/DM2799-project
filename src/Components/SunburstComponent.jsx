@@ -16,7 +16,8 @@ const SunburstComponent = ({data}) => {
 
         		const radius = Math.min(width, height) / 2 ;
 
-        		console.log(radius);
+				console.log(radius);
+				d3.select(d3Container.current).selectAll('*').remove();
 		    	const svg = d3.select(d3Container.current)
 			  			.append("svg")
 			    		.attr("width", width)
