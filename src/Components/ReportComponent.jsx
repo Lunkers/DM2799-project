@@ -101,7 +101,8 @@ const ReportComponent = () => {
 
     return (<div>
         <div className="calendar-container">
-            <h3>This is where you report time worked</h3>
+            <h1>Time reporting</h1>
+            <h3>Report your worked time here.</h3>
             <Prompt when={reports.length > 0} message="You have unsaved changes! Are you sure you want to leave?" />
             <TimeContext.Consumer>
                 {({ reported, addReportedTime }) => (<>

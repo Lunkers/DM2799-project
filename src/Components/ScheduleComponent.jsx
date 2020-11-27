@@ -16,7 +16,8 @@ const ScheduleComponent = () => {
     const [hiddenState, setHiddenState] = useState(
         Object.keys(tasks).reduce((obj, category) => ({
             ...obj,
-            [category]: false
+            [category]: false,
+            "Project Management": true,
         }), {})
     )
 
@@ -105,7 +106,7 @@ const ScheduleComponent = () => {
     return (<div>
         <div className="container">
             <div className="schedule-container">
-                <h3>Plan your learning for the week</h3>
+                <h1>Plan your learning for the week</h1>
                 <TimeContext.Consumer>
                     {({ scheduled, addScheduledTime, removeScheduledTime }) => (
                         <div>
@@ -120,7 +121,7 @@ const ScheduleComponent = () => {
                                 {Object.keys(tasks).map(category => (
                                     <div className="planner-container">
                                         <div className="category-name" onClick={() => setHiddenState({ ...hiddenState, [category]: !hiddenState[category] })}>
-                                            <h2 >{category}</h2>
+                                            <h3 >{category}</h3>
                                             <div >
                                                 {hiddenState[category] ? <UpOutlined /> : <DownOutlined />}
                                             </div>
@@ -132,7 +133,7 @@ const ScheduleComponent = () => {
                                                         <strong>Task</strong>
                                                     </span>
                                                     <span>
-                                                        <strong>Planned Time (Hours)</strong>
+                                                        <strong>Estimated Time (Hours)</strong>
                                                     </span>
                                                 </div>
                                                 {tasks[category].map(task => (

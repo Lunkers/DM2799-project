@@ -17,17 +17,14 @@ function App() {
             <div className="sidebar">
               <h2>Time reporter</h2>
               <Menu mode="inline"
-              style={{height:"100%"}}>
+              defaultSelectedKeys={['1']}>
                 <Menu.Item key="1">
-                  <Link to={"/"}>Home</Link>
+                  <Link to={"/schedule"}>Plan work</Link>
                 </Menu.Item>
-                <Menu.Item>
-                  <Link to={"/schedule"}>Schedule</Link>
-                </Menu.Item>
-                <Menu.Item>
+                <Menu.Item key="2">
                   <Link to={"/report"}>Report time worked</Link>
                 </Menu.Item>
-                <Menu.Item>
+                <Menu.Item key="3">
                   <Link to={"/viz"}>Visualizations</Link>
                 </Menu.Item>
               </Menu>
