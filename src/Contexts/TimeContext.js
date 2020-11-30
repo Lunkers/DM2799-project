@@ -34,8 +34,7 @@ function TimeProvider(props) {
                 return report
             })
             //console.log(reported)
-            console.log(newReports)
-            setReported([...reported, ...reports])
+            setReported(newReports)
         },
         removeScheduledTime: ({ id }) => {
             //[startTime, endTime] = startTime < endTime ? [startTime, endTime] : [endTime, startTime] //make sure earliest time is always first

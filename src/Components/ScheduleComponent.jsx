@@ -1,7 +1,7 @@
 
 import React, { useContext, useState } from 'react';
 import { TimeContext } from '../Contexts/TimeContext';
-import { Button, Divider, Table } from 'antd'
+import { Button, Divider, Table, message, Affix } from 'antd'
 import tasks from '../Data/tasks';
 import TaskScheduleComponent from './TaskScheduleComponent';
 import './ScheduleComponent.css';
@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons'
 
 const ScheduleComponent = () => {
-    const {scheduled} = useContext(TimeContext)
+    const { scheduled } = useContext(TimeContext)
     const [localScheduled, setLocalScheduled] = useState(scheduled)
     const [hiddenState, setHiddenState] = useState(
         Object.keys(tasks).reduce((obj, category) => ({
@@ -107,9 +107,17 @@ const ScheduleComponent = () => {
         <div className="container">
             <div className="schedule-container">
                 <h1>Plan your learning for the week</h1>
+
                 <TimeContext.Consumer>
                     {({ scheduled, addScheduledTime, removeScheduledTime }) => (
                         <div>
+                            <div className="save-btn">
+                                <Button type="primary" className="save-btn" onClick={() => {
+                                    message.success("Saved task planning!")
+                                    addScheduledTime(localScheduled)
+                                }}>Save Planning</Button>
+                            </div>
+
                             {
                                 // scheduled.map(scheduleTime => (<div>
                                 //     <p>{scheduleTime.task}</p>
@@ -144,15 +152,16 @@ const ScheduleComponent = () => {
 
                                     </div>
                                 ))}
-                                <Button type="primary" onClick={() => addScheduledTime(localScheduled)}>Save Planning</Button>
+
                             </div>
+
                         </div>
                     )}
 
                 </TimeContext.Consumer>
             </div>
             <div className="deliverables-container">
-                <h3>Course assignments</h3>
+                <h1>Course deliverables</h1>
                 <Table dataSource={deliverables} columns={columns} />
             </div>
         </div>

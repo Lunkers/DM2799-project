@@ -15,7 +15,7 @@ function App() {
         <div className="App">
           <div className="app-container">
             <div className="sidebar">
-              <h2>Time reporter</h2>
+              <h1>Time reporter</h1>
               <Menu mode="inline"
               defaultSelectedKeys={['1']}>
                 <Menu.Item key="1">

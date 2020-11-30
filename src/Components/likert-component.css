@@ -1,0 +1,10 @@
+.likert-container {
+    width: 100%;
+    text-align: center;
+}
+
+.emoji-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
