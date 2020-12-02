@@ -6,7 +6,7 @@ import tasks from '../Data/tasks'
 const categoriesByTask = Object.fromEntries(
   Object
     .entries(tasks)
-    .flatMap(([category, categoryTasks]) => categoryTasks.map(categoryTask => [categoryTask, category]))
+    .flatMap(([category, categoryTasks]) => categoryTasks.map(categoryTask => [category, categoryTask]))
 );
 
 const transitionDuration = 900;
@@ -18,18 +18,38 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
     const height = widthHeightValue - margin.top - margin.bottom;
 
     data = Array.from(data, ([key, value]) => ({key,value}));
+
+    /*data.push('test');
+
     data = data.map(d => {
     	const container = {}
 
     	container.key = d.key;
     	container.value = d.value;
     	container.category = categoriesByTask[d.key];
+    	container.children = [];
 
     	return container;
     });
 
+    /*let root;
+    categoriesByTask.forEach(el => {
+ 		 // Handle the root element
+  		if (el.category === null) {
+    		root = el;
+    		return;
+  		}
+  		// Use our mapping to locate the parent element in our data array
+  		const parentEl = data[idMapping[el.category]];
+  		// Add our current el to its parent's `children` array
+  		parentEl.children = [...(parentEl.children || []), el];
+	});
+
     console.log("testing data");
     console.log(data);
+    //data[data.length - 1].key = "root";
+    //data[data.length - 1].value = 0;
+    //data[data.length - 1].category = null;
 
     const idMapping = data.reduce((acc, el, i) => {
   				acc[el.key] = i;
@@ -42,17 +62,20 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 	/*let root;
 	data.forEach(el => {
  		 // Handle the root element
-  		if (el.parentId === null) {
+  		if (el.category === null) {
     		root = el;
     		return;
   		}
   		// Use our mapping to locate the parent element in our data array
-  		const parentEl = data[idMapping[el.parentId]];
+  		const parentEl = data[idMapping[el.category]];
   		// Add our current el to its parent's `children` array
   		parentEl.children = [...(parentEl.children || []), el];
 	});
 
-	console.log(root);*/
+	console.log("root");
+	console.log(root);
+	console.log("child");
+	console.log(root.children);*/
 
 	/*const dataPerCategory = data.reduce((acc, {key, value}) => {
 				  const category = categoriesByTask[key];
@@ -73,7 +96,6 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 
     useEffect (( ) => {
     	    if(data && d3Container.current) {
-    	    	/**/
 
     	    	// JSON data
 			    const nodeData = {
@@ -92,7 +114,7 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 
 			    // constiables
 			    const radius = Math.min(width, height) / 2 ;
-			    const color = d3.scaleOrdinal(["#f7fbff","#f6faff","#f5fafe","#f5f9fe","#f4f9fe","#f3f8fe"]);
+			    const color = d3.scaleOrdinal(["#232931","#32505C","#417B7D","#67A890","#A9D198","#FFF5A5"]);
 
 			    // Create primary <g> element
 			    d3.select(d3Container.current).selectAll('*').remove();
@@ -109,82 +131,53 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 			        .size([2 * Math.PI, radius]);
 
 			    // Find data root
-			    const root = d3.hierarchy(nodeData)
+			    const dataroot = d3.hierarchy(nodeData)
 			        .sum(function (d) { return d.size});
 
 			    // Size arcs
-			    partition(root);
+			    partition(dataroot);
 			    const arc = d3.arc()
 			        .startAngle(function (d) { return d.x0 })
 			        .endAngle(function (d) { return d.x1 })
 			        .innerRadius(function (d) { return d.y0 })
 			        .outerRadius(function (d) { return d.y1 });
 
+			    const div = d3.select("body").append("div")
+     				.attr("class", "tooltip-donut")
+     				.style("opacity", 0);
+
+     			console.log(dataroot.descendants());
+
 			    // Put it all together
 			    g.selectAll('path')
-			        .data(root.descendants())
+			        .data(dataroot.descendants())
 			        .enter().append('path')
 			        .attr("display", function (d) { return d.depth ? null : "none"; })
 			        .attr("d", arc)
 			        .style('stroke', '#fff')
-			        .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); });
+			        .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); })
 
-        		/*const radius = Math.min(width, height) / 2 ;
+			        .on('mouseenter', function (d, i) {
+          				d3.select(this).transition()
+               				.duration('50')
+               				.attr('opacity', '.85');
+               			div.transition()
+               				.duration(50)
+               				.style("opacity", 1)
+               			div.html(d.size);
 
-				d3.select(d3Container.current).selectAll('*').remove();
-		    	const svg = d3.select(d3Container.current)
-			  			.append("svg")
-			    		.attr("width", width)
-			    		.attr("height", height);
+     				})
 
-			    const g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+     				.on('mouseleave', function (d, i) {
+          				d3.select(this).transition()
+               				.duration('50')
+               				.attr('opacity', '1');
+               			div.transition()
+               				.duration('50')
+               				.style("opacity", 0);
+    				});
 
-			    const color = d3.scaleOrdinal()
-  								.domain(data)
-								.range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"])
-
-		  		const pie = d3.pie().value(d => d.value);
-
-		  		const arcGenerator = d3.arc()
-  					.innerRadius(0)
-  					.outerRadius(radius)
-
-		  		const arc = d3.arc()
-		                .innerRadius(radius * 0.5)
-		                .outerRadius(radius);
-
-		        const outerArc = d3.arc()
-  					.innerRadius(radius * 0.9)
-  					.outerRadius(radius * 0.9);
-
-		        const arcData = pie(data);       
-		        
-		        const arcs = g.selectAll("path")
-		                .data(arcData)
-		                .join("path")
-		                .attr("fill", function(d){ return(color(d.data.key)) })
-		                .attr("stroke", "white")
-		                .attr("d",arc);*/
-
-				/*svg.selectAll('mySlices')
-				  .data(arcData)
-				  .enter()
-				  .append('text')
-				  .text(d => "Task: " + d.key)
-				  .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
-				  .style("text-anchor", "middle")
-				  .style("font-size", 17);*/
-		        /*
-		        		.attr('points', function(d) {
-		        			const posA = arc.centroid(d);
-		        			const posB = outerArc.centroid(d);
-		        			const posC = outerArc.centroid(d);
-		        			const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-		        			posC[0] = radius * 0.95 * (midangle < Math.PI ? 1 : - 1);
-		        			return [posA, posB, posC];
-		        		});
-
-		        svg.selectAll('allLabels')
+		        /*svg.selectAll('allLabels')
   					.data(data)
   					.enter()
   					.append('text')
