@@ -11,9 +11,9 @@ const categoriesByTask = Object.fromEntries(
 
 const transitionDuration = 900;
 
-const SunburstComponent = ({widthHeightValue = 300, data}) => {
+const SunburstComponent = ({widthHeightValue = 600, data}) => {
 
-	const margin = { top: 50, right: 0, bottom: 0, left: 0 };
+	const margin = { top: 10, right: 0, bottom: 0, left: 0 };
 	const width = widthHeightValue - margin.left - margin.right - margin.top;
     const height = widthHeightValue - margin.top - margin.bottom;
 
@@ -85,13 +85,13 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 			        "name": "categories", 
 			        "children": [{
 			            			"name": "Project Management",
-			            			"children": [{"name": "Coordinated Meetings", "size": 4}, {"name": "Created Slides", "size": 4}]
+			            			"children": [{"name": "Coordinated Meetings", "value": 4}, {"name": "Created Slides", "value": 4}]
 			        			}, {
 			            			"name": "Research",
-			            			"children": [{"name": "Researched related work", "size": 3}, {"name": "Brainstorming", "size": 3}, {"name": "Researched Tools", "size": 3}]
+			            			"children": [{"name": "Researched related work", "value": 3}, {"name": "Brainstorming", "value": 3}, {"name": "Researched Tools", "value": 3}]
 			        			}, {
 			            			"name": "Data Management",
-			            			"children": [{"name": "Gathered raw data", "size": 4}, {"name": "Processed raw data", "size": 4}]
+			            			"children": [{"name": "Gathered raw data", "value": 4}, {"name": "Processed raw data", "value": 4}]
 			        			}]
 			    };
 
@@ -115,9 +115,9 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 
 			    // Find data root
 			    const dataroot = d3.hierarchy(nodeData)
-			        .sum(function (d) { return d.size});
+			        .sum(function (d) { return d.value});
 
-			    // Size arcs
+			    // size arcs
 			    partition(dataroot);
 			    const arc = d3.arc()
 			        .startAngle(function (d) { return d.x0 })
@@ -164,8 +164,9 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
     				.append("text")  // <-- 2
     				.attr("transform", function(d) {
         				return "translate(" + arc.centroid(d) + ")rotate(" + computeTextRotation(d) + ")"; }) // <-- 3
-    				.attr("dx", "-20")  // <-- 4
+    				.attr("dx", "0")  // <-- 4
     				.attr("dy", ".5em")  // <-- 5
+    				.style("text-anchor", "middle")
     				.text(function(d) { return d.parent ? d.data.name : "" });  // <-- 6
 
     			function computeTextRotation(d) {
