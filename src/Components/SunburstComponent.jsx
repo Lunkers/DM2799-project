@@ -1,7 +1,13 @@
 import { useD3 } from '../hooks/useD3';
 import React, { component, useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import categories from '../Data/tasks'
+import tasks from '../Data/tasks'
+
+const categoriesByTask = Object.fromEntries(
+  Object
+    .entries(tasks)
+    .flatMap(([category, categoryTasks]) => categoryTasks.map(categoryTask => [categoryTask, category]))
+);
 
 const transitionDuration = 900;
 
@@ -11,13 +17,119 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 	const width = widthHeightValue - margin.left - margin.right - margin.top;
     const height = widthHeightValue - margin.top - margin.bottom;
 
+    data = Array.from(data, ([key, value]) => ({key,value}));
+    data = data.map(d => {
+    	const container = {}
+
+    	container.key = d.key;
+    	container.value = d.value;
+    	container.category = categoriesByTask[d.key];
+
+    	return container;
+    });
+
+    console.log("testing data");
+    console.log(data);
+
+    const idMapping = data.reduce((acc, el, i) => {
+  				acc[el.key] = i;
+  				return acc;
+			}, {});
+	
+	console.log("idmap");
+	console.log(idMapping);
+
+	/*let root;
+	data.forEach(el => {
+ 		 // Handle the root element
+  		if (el.parentId === null) {
+    		root = el;
+    		return;
+  		}
+  		// Use our mapping to locate the parent element in our data array
+  		const parentEl = data[idMapping[el.parentId]];
+  		// Add our current el to its parent's `children` array
+  		parentEl.children = [...(parentEl.children || []), el];
+	});
+
+	console.log(root);*/
+
+	/*const dataPerCategory = data.reduce((acc, {key, value}) => {
+				  const category = categoriesByTask[key];
+				  if{}
+				}, {});
+
+	const taskPerCategory = data.reduce((acc, {key, value}) => {
+				  const category = categoriesByTask[key]
+				  return {
+				  	[category]: category,
+				  	[taskList]: 
+				  };
+				}, {});
+
+	console.log(taskPerCategory);*/
+
     let d3Container = useRef(null);
 
     useEffect (( ) => {
     	    if(data && d3Container.current) {
-    	    	data = Array.from(data, ([key, value]) => ({key,value}));
+    	    	/**/
 
-        		const radius = Math.min(width, height) / 2 ;
+    	    	// JSON data
+			    const nodeData = {
+			        "name": "TOPICS", "children": [{
+			            "name": "Topic A",
+			            "children": [{"name": "Sub A1", "size": 4}, {"name": "Sub A2", "size": 4}]
+			        }, {
+			            "name": "Topic B",
+			            "children": [{"name": "Sub B1", "size": 3}, {"name": "Sub B2", "size": 3}, {
+			                "name": "Sub B3", "size": 3}]
+			        }, {
+			            "name": "Topic C",
+			            "children": [{"name": "Sub A1", "size": 4}, {"name": "Sub A2", "size": 4}]
+			        }]
+			    };
+
+			    // constiables
+			    const radius = Math.min(width, height) / 2 ;
+			    const color = d3.scaleOrdinal(["#f7fbff","#f6faff","#f5fafe","#f5f9fe","#f4f9fe","#f3f8fe"]);
+
+			    // Create primary <g> element
+			    d3.select(d3Container.current).selectAll('*').remove();
+			    const svg = d3.select(d3Container.current)
+			  			.append("svg")
+			    		.attr("width", width)
+			    		.attr("height", height);
+
+			    const g = svg.append('g')
+			        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+
+			    // Data strucure
+			    const partition = d3.partition()
+			        .size([2 * Math.PI, radius]);
+
+			    // Find data root
+			    const root = d3.hierarchy(nodeData)
+			        .sum(function (d) { return d.size});
+
+			    // Size arcs
+			    partition(root);
+			    const arc = d3.arc()
+			        .startAngle(function (d) { return d.x0 })
+			        .endAngle(function (d) { return d.x1 })
+			        .innerRadius(function (d) { return d.y0 })
+			        .outerRadius(function (d) { return d.y1 });
+
+			    // Put it all together
+			    g.selectAll('path')
+			        .data(root.descendants())
+			        .enter().append('path')
+			        .attr("display", function (d) { return d.depth ? null : "none"; })
+			        .attr("d", arc)
+			        .style('stroke', '#fff')
+			        .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); });
+
+        		/*const radius = Math.min(width, height) / 2 ;
 
 				d3.select(d3Container.current).selectAll('*').remove();
 		    	const svg = d3.select(d3Container.current)
@@ -28,25 +140,67 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 			    const g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 			    const color = d3.scaleOrdinal()
-		  						.domain(data.map(d => d.key))
-		  						.range(["#204051", "#3B5070", "#675C88", "#996694", "#C97190","#ED8382","#FFA06F"])
+  								.domain(data)
+								.range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"])
 
-		  		const pie = d3.pie().value(d => d.value)
+		  		const pie = d3.pie().value(d => d.value);
+
+		  		const arcGenerator = d3.arc()
+  					.innerRadius(0)
+  					.outerRadius(radius)
 
 		  		const arc = d3.arc()
-		                .innerRadius(0)
+		                .innerRadius(radius * 0.5)
 		                .outerRadius(radius);
+
+		        const outerArc = d3.arc()
+  					.innerRadius(radius * 0.9)
+  					.outerRadius(radius * 0.9);
 
 		        const arcData = pie(data);       
 		        
 		        const arcs = g.selectAll("path")
 		                .data(arcData)
 		                .join("path")
-		                .attr("fill", d=>color(d.key))
+		                .attr("fill", function(d){ return(color(d.data.key)) })
 		                .attr("stroke", "white")
-		                .attr("d",arc);
+		                .attr("d",arc);*/
 
-		        const newarc = d3.arc()
+				/*svg.selectAll('mySlices')
+				  .data(arcData)
+				  .enter()
+				  .append('text')
+				  .text(d => "Task: " + d.key)
+				  .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+				  .style("text-anchor", "middle")
+				  .style("font-size", 17);*/
+		        /*
+		        		.attr('points', function(d) {
+		        			const posA = arc.centroid(d);
+		        			const posB = outerArc.centroid(d);
+		        			const posC = outerArc.centroid(d);
+		        			const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+		        			posC[0] = radius * 0.95 * (midangle < Math.PI ? 1 : - 1);
+		        			return [posA, posB, posC];
+		        		});
+
+		        svg.selectAll('allLabels')
+  					.data(data)
+  					.enter()
+  					.append('text')
+    					.text( d => d.key )
+    					.attr('transform', function(d) {
+        					const pos = outerArc.centroid(d);
+        					const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+        					pos[0] = radius * 0.99 * (midangle < Math.PI ? 1 : -1);
+        					return 'translate(' + pos + ')';
+    				})
+    				.style('text-anchor', function(d) {
+        				const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+        				return (midangle < Math.PI ? 'start' : 'end');
+    				});*/
+
+		        /*const newarc = d3.arc()
 		        				.innerRadius(2 * radius / 3)
 		        				.outerRadius(radius);
 
@@ -56,12 +210,8 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 		        	})
 		        	.attr("text-anchor", "middle")
 		        	.attr("fill", "white")
-		        	.text(d => d.key);
+		        	.text(d => d.key);*/
     		}
-
-
-
-
     },[data, d3Container.current]);
 
 
