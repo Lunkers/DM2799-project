@@ -3,8 +3,8 @@ import * as d3 from 'd3';
 
 const LoadingBarComponent = ({ data, stacked = false, text }) => {
     const width = 450
-    const height = 80;
-    const margin = { left: 10, right: 10, top: 5, bottom: 5 }
+    const height = 100;
+    const margin = { left: 10, right: 10, top: 10, bottom: 10 }
     const [smallerName, setSmallerName] = useState('')
     const [largerName, setLargerName] = useState('')
 
@@ -16,13 +16,9 @@ const LoadingBarComponent = ({ data, stacked = false, text }) => {
     useEffect(() => {
         //avoid null pointers
         if (data && loadingBarContainer.current) {
-            console.log("drawing bar chart")
-            data.sort((a, b) => b.quarters - a.quarters)
-            //assign data correctly
-            const largerData = [data[0]]
-            setLargerName(data[0].type)
-            setSmallerName(data[1].type)
-            const smallerData = [data[1]]
+            console.log(data)
+            const scheduledData = data.scheduled;
+            const reportedData = data.reported
 
             d3.select(loadingBarContainer.current).selectAll('*').remove()
 
@@ -30,38 +26,49 @@ const LoadingBarComponent = ({ data, stacked = false, text }) => {
                 .append('svg')
                 .attr("width", width)
                 .attr("height", height)
+            
 
             const scale = d3.scaleLinear()
-                .domain([0, d3.max(data, d => d.quarters)])
+                .domain([0, d3.max([scheduledData, reportedData]) + 2])
                 .range([margin.left, width - margin.right])
 
+            console.log(scale.domain()[1])
             console.log('drawing larger bar')
-            const largerBar = svg.selectAll(null)
-                .data(largerData)
-                .enter()
+            const backgroundBar = svg
                 .append('rect')
-                .attr('x', margin.left)
+                .attr("class", "background-rect")
+                .attr('x', scale(scale.domain()[0]))
                 .attr('y', margin.top)
-                .attr('height', 75)
-                .attr('width', d => scale(d.quarters))
-                .attr('rx', 5)
-                .attr('ry', 5)
+                .attr('height', height -  2 * margin.bottom - margin.top)
+                .attr('width', scale(scale.domain()[1]))
                 .style('fill', '#232931')
 
             const smallerBar = svg.selectAll(null)
-                .data(smallerData)
+                .data([reportedData])
                 .enter()
                 .append('rect')
-                .attr('x', margin.left)
+                .attr('x', scale(scale.domain()[0]))
                 .attr('y', margin.top)
-                .attr('height', 75)
-                .attr('width', d => scale(d.quarters))
-                .attr('rx', 5)
-                .attr('ry', 5)
-                .style('fill', '#67A890')
-            console.log('finished drawing')
-            console.log('finished drawing')
+                .attr('height', height - 2*margin.bottom - margin.top)
+                .attr('width', d => scale(d))
+                .style('fill', '#A9D198')
 
+            console.log(scale(reportedData))
+            const axis = d3.axisBottom(scale)
+            console.log(scale.ticks().map(t => t/4))
+            axis.tickFormat(t => t % 4 == 0 ? t / 4 : "" )
+            
+            const drawnLine = svg.append('line')
+            .attr('x1', scale(scheduledData))
+            .attr('x2', scale(scheduledData))
+            .attr('y1', height - 2 * margin.bottom)
+            .attr('y2', margin.top)
+            .attr('stroke', () => scheduledData > reportedData ? 'red' : 'green')
+            .attr('stroke-width', 2)
+
+            const drawnAxis = svg.append('g')
+            .attr('transform', `translate(${0}, ${height -  2* margin.bottom})`)
+            .call(axis)
 
         }
     }, [loadingBarContainer.current]);
@@ -71,7 +78,6 @@ const LoadingBarComponent = ({ data, stacked = false, text }) => {
             <div className="loadingBar" ref={loadingBarContainer}>
 
             </div>
-            <p>{smallerName} / {largerName}</p>
         </div>
     )
 
