@@ -6,7 +6,7 @@ import tasks from '../Data/tasks'
 const categoriesByTask = Object.fromEntries(
   Object
     .entries(tasks)
-    .flatMap(([category, categoryTasks]) => categoryTasks.map(categoryTask => [category, categoryTask]))
+    .flatMap(([category, categoryTasks]) => categoryTasks.map(categoryTask => [category, []]))
 );
 
 const transitionDuration = 900;
@@ -19,9 +19,7 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 
     data = Array.from(data, ([key, value]) => ({key,value}));
 
-    /*data.push('test');
-
-    data = data.map(d => {
+    /*data = data.map(d => {
     	const container = {}
 
     	container.key = d.key;
@@ -77,21 +75,6 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 	console.log("child");
 	console.log(root.children);*/
 
-	/*const dataPerCategory = data.reduce((acc, {key, value}) => {
-				  const category = categoriesByTask[key];
-				  if{}
-				}, {});
-
-	const taskPerCategory = data.reduce((acc, {key, value}) => {
-				  const category = categoriesByTask[key]
-				  return {
-				  	[category]: category,
-				  	[taskList]: 
-				  };
-				}, {});
-
-	console.log(taskPerCategory);*/
-
     let d3Container = useRef(null);
 
     useEffect (( ) => {
@@ -99,17 +82,17 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
 
     	    	// JSON data
 			    const nodeData = {
-			        "name": "TOPICS", "children": [{
-			            "name": "Topic A",
-			            "children": [{"name": "Sub A1", "size": 4}, {"name": "Sub A2", "size": 4}]
-			        }, {
-			            "name": "Topic B",
-			            "children": [{"name": "Sub B1", "size": 3}, {"name": "Sub B2", "size": 3}, {
-			                "name": "Sub B3", "size": 3}]
-			        }, {
-			            "name": "Topic C",
-			            "children": [{"name": "Sub A1", "size": 4}, {"name": "Sub A2", "size": 4}]
-			        }]
+			        "name": "categories", 
+			        "children": [{
+			            			"name": "Project Management",
+			            			"children": [{"name": "Coordinated Meetings", "size": 4}, {"name": "Created Slides", "size": 4}]
+			        			}, {
+			            			"name": "Research",
+			            			"children": [{"name": "Researched related work", "size": 3}, {"name": "Brainstorming", "size": 3}, {"name": "Researched Tools", "size": 3}]
+			        			}, {
+			            			"name": "Data Management",
+			            			"children": [{"name": "Gathered raw data", "size": 4}, {"name": "Processed raw data", "size": 4}]
+			        			}]
 			    };
 
 			    // constiables
@@ -149,9 +132,10 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
      			console.log(dataroot.descendants());
 
 			    // Put it all together
-			    g.selectAll('path')
+			    g.selectAll('g')
 			        .data(dataroot.descendants())
-			        .enter().append('path')
+			        .enter().append('g').attr('class','node')
+			        .append('path')
 			        .attr("display", function (d) { return d.depth ? null : "none"; })
 			        .attr("d", arc)
 			        .style('stroke', '#fff')
@@ -163,8 +147,7 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
                				.attr('opacity', '.85');
                			div.transition()
                				.duration(50)
-               				.style("opacity", 1)
-               			div.html(d.size);
+               				.style("opacity", 1);
 
      				})
 
@@ -177,33 +160,18 @@ const SunburstComponent = ({widthHeightValue = 300, data}) => {
                				.style("opacity", 0);
     				});
 
-		        /*svg.selectAll('allLabels')
-  					.data(data)
-  					.enter()
-  					.append('text')
-    					.text( d => d.key )
-    					.attr('transform', function(d) {
-        					const pos = outerArc.centroid(d);
-        					const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-        					pos[0] = radius * 0.99 * (midangle < Math.PI ? 1 : -1);
-        					return 'translate(' + pos + ')';
-    				})
-    				.style('text-anchor', function(d) {
-        				const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-        				return (midangle < Math.PI ? 'start' : 'end');
-    				});*/
+			    g.selectAll(".node")  // <-- 1
+    				.append("text")  // <-- 2
+    				.attr("transform", function(d) {
+        				return "translate(" + arc.centroid(d) + ")rotate(" + computeTextRotation(d) + ")"; }) // <-- 3
+    				.attr("dx", "-20")  // <-- 4
+    				.attr("dy", ".5em")  // <-- 5
+    				.text(function(d) { return d.parent ? d.data.name : "" });  // <-- 6
 
-		        /*const newarc = d3.arc()
-		        				.innerRadius(2 * radius / 3)
-		        				.outerRadius(radius);
-
-		        arcs.append("text")
-		        	.attr("transform", d => {
-		        		return "translate(" + newarc.centroid(d) + ")";
-		        	})
-		        	.attr("text-anchor", "middle")
-		        	.attr("fill", "white")
-		        	.text(d => d.key);*/
+    			function computeTextRotation(d) {
+        			const angle = (d.x0 + d.x1) / Math.PI * 90;
+        			return (angle < 120 || angle > 270) ? angle : angle + 180;  // labels as rims
+    			}
     		}
     },[data, d3Container.current]);
 
