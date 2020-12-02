@@ -5,13 +5,14 @@ import BarChart from './BarChart';
 import SunBurst from './SunburstComponent';
 import LoadingBar from './LoadingBarComponent';
 import './VizView.css'
+import { Divider } from 'antd';
 
 const VizComponent = () => {
     return (
         <div>
-            <h2>Visualizations</h2>
+            <h1>Visualizations</h1>
             <TimeContext.Consumer>
-                {({ scheduled, reported, getReportedTimesBasedOnTask, getReportedAndScheduledReduced }) => (
+                {({ scheduled, reported, getReportedTimesBasedOnTask, getReportedAndScheduledReduced, getTaskBasedScheduledAndReported }) => (
                     <>
                         {(scheduled.length > 0 && reported.length > 0) ? (
                             <div className="viz-container">
@@ -19,7 +20,16 @@ const VizComponent = () => {
                                     <SunBurst data={getReportedTimesBasedOnTask()} />
                                 </div>
                                 <div className="loading-container">
-                                    <LoadingBar data={getReportedAndScheduledReduced()} />
+                                    <h2>Time worked (hours)</h2>
+                                    {getTaskBasedScheduledAndReported().map(report => (
+                                        <>
+                                        <p><strong>
+                                            {report.task}
+                                            </strong></p>
+                                        <LoadingBar data={report}/>
+                                        <Divider/>
+                                        </>
+                                    ))}
                                 </div>
                             </div>)
                             : (

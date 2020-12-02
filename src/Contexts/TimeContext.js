@@ -54,7 +54,20 @@ function TimeProvider(props) {
             const reportedSum = d3.sum(reported, r => r.quarters)
             const scheduledSum = d3.sum(scheduled, s => s.quarters)
 
-            return [{type: "Reported", quarters: reportedSum}, {type: "Scheduled", quarters: scheduledSum}]
+            return {reported: {type: "Reported", quarters: reportedSum}, scheduled: {type: "Scheduled", quarters: scheduledSum}}
+        },
+        getTaskBasedScheduledAndReported:() => {
+            const groupedScheduled = Object.fromEntries(d3.rollup(scheduled, v => d3.sum(v, d=>d.quarters), d => d.task))
+            const groupedReported = Object.fromEntries(d3.rollup(reported, v => d3.sum(v, d=>d.quarters), d => d.task))
+            const reportedOrScheduledTasks = new Set([...Object.keys(groupedReported), ...Object.keys(groupedScheduled)])
+            
+            const groupedCompArr = [...reportedOrScheduledTasks].map(v => ({
+                task: v, 
+                reported: groupedReported[v] ? groupedReported[v] : 0,
+                scheduled: groupedScheduled[v] ? groupedScheduled[v] : 0
+            }))
+            console.log(groupedCompArr)
+            return groupedCompArr
         }
 
     };
