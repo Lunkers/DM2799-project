@@ -108,7 +108,9 @@ function TimeProvider(props) {
                 } 
                 if (catRetObj.children.length > 0) { 
                 // It has at least one
-                    catRetObj.value = Object.values(catRetObj.children).reduce((r, { value }) => r + value, 0);
+                    var sum = 0;
+                    catRetObj.value = Object.values(catRetObj.children).forEach((x)=>sum+=x.value)
+                    console.log(catRetObj.value)
                     retObj.children = [...retObj.children, catRetObj]
                 }
             })
