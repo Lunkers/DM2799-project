@@ -10,7 +10,19 @@ function TimeProvider(props) {
     const [scheduled, setScheduled] = useState([])
     const [reported, setReported] = useState([])
     const [index, setIndex] = useState(1);
-
+    const getTaskBasedScheduledAndReported =() => {
+        const groupedScheduled = Object.fromEntries(d3.rollup(scheduled, v => d3.sum(v, d=>d.quarters), d => d.task))
+        const groupedReported = Object.fromEntries(d3.rollup(reported, v => d3.sum(v, d=>d.quarters), d => d.task))
+        const reportedOrScheduledTasks = new Set([...Object.keys(groupedReported), ...Object.keys(groupedScheduled)])
+        
+        const groupedCompArr = [...reportedOrScheduledTasks].map(v => ({
+            task: v, 
+            reported: groupedReported[v] ? groupedReported[v] : 0,
+            scheduled: groupedScheduled[v] ? groupedScheduled[v] : 0
+        }))
+        console.log(groupedCompArr)
+        return groupedCompArr
+    }
     const provided = {
         scheduled,
         reported,
@@ -66,8 +78,35 @@ function TimeProvider(props) {
                 reported: groupedReported[v] ? groupedReported[v] : 0,
                 scheduled: groupedScheduled[v] ? groupedScheduled[v] : 0
             }))
-            console.log(groupedCompArr)
             return groupedCompArr
+        },
+        getCategoryGroupedTaskTimes:() => {
+            let retObj = {
+                "name": "categories",
+                children: []
+            }
+            const taskCategories = Object.keys(tasks);
+
+            //for some reason i can't reference the other function, I'll just copy paste to save time lmao
+            const groupedReported = Object.fromEntries(d3.rollup(reported, v => d3.sum(v, d=>d.quarters), d => d.task))
+            const groupedWithName = Object.keys(groupedReported).map(key => (
+                {
+                    name: key,
+                    value: groupedReported[key]
+                }
+            ))
+            // beautiful nested for-loop: O(n^3) is not dangerous
+            taskCategories.map(category => {
+                const tasksInCategory = tasks[category]
+                console.log(tasksInCategory)
+                const reportedInCategory = groupedWithName.filter(r => tasksInCategory.includes(r.name))
+                const catRetObj = {
+                    "name": category,
+                    "children": reportedInCategory
+                }
+                retObj.children = [...retObj.children, catRetObj]
+            })
+            return retObj;
         }
 
     };

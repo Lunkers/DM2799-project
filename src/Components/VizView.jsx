@@ -12,12 +12,13 @@ const VizComponent = () => {
         <div>
             <h1>Visualizations</h1>
             <TimeContext.Consumer>
-                {({ scheduled, reported, getReportedTimesBasedOnTask, getReportedAndScheduledReduced, getTaskBasedScheduledAndReported }) => (
+                {({ scheduled, reported, getReportedTimesBasedOnTask, getCategoryGroupedTaskTimes, getTaskBasedScheduledAndReported }) => (
                     <>
                         {(scheduled.length > 0 && reported.length > 0) ? (
                             <div className="viz-container">
+                                
                                 <div className="pie-container">
-                                    <SunBurst data={getReportedTimesBasedOnTask()} />
+                                    <SunBurst data={getCategoryGroupedTaskTimes()} />
                                 </div>
                                 <div className="loading-container">
                                     <h2>Time worked (hours)</h2>
@@ -31,6 +32,7 @@ const VizComponent = () => {
                                         </>
                                     ))}
                                 </div>
+
                             </div>)
                             : (
                                 <p>You need to schedule and report work to see charts!</p>
