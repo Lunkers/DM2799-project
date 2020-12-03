@@ -3,97 +3,20 @@ import React, { component, useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import tasks from '../Data/tasks'
 
-const categoriesByTask = Object.fromEntries(
-  Object
-    .entries(tasks)
-    .flatMap(([category, categoryTasks]) => categoryTasks.map(categoryTask => [category, []]))
-);
-
 const transitionDuration = 900;
 
 const SunburstComponent = ({widthHeightValue = 600, data}) => {
 
-	const margin = { top: 10, right: 0, bottom: 0, left: 0 };
-	const width = widthHeightValue - margin.left - margin.right - margin.top;
+	  const margin = { top: 10, right: 0, bottom: 0, left: 0 };
+	  const width = widthHeightValue - margin.left - margin.right - margin.top;
     const height = widthHeightValue - margin.top - margin.bottom;
 
-    data = Array.from(data, ([key, value]) => ({key,value}));
-
-    /*data = data.map(d => {
-    	const container = {}
-
-    	container.key = d.key;
-    	container.value = d.value;
-    	container.category = categoriesByTask[d.key];
-    	container.children = [];
-
-    	return container;
-    });
-
-    /*let root;
-    categoriesByTask.forEach(el => {
- 		 // Handle the root element
-  		if (el.category === null) {
-    		root = el;
-    		return;
-  		}
-  		// Use our mapping to locate the parent element in our data array
-  		const parentEl = data[idMapping[el.category]];
-  		// Add our current el to its parent's `children` array
-  		parentEl.children = [...(parentEl.children || []), el];
-	});
-
-    console.log("testing data");
-    console.log(data);
-    //data[data.length - 1].key = "root";
-    //data[data.length - 1].value = 0;
-    //data[data.length - 1].category = null;
-
-    const idMapping = data.reduce((acc, el, i) => {
-  				acc[el.key] = i;
-  				return acc;
-			}, {});
-	
-	console.log("idmap");
-	console.log(idMapping);
-
-	/*let root;
-	data.forEach(el => {
- 		 // Handle the root element
-  		if (el.category === null) {
-    		root = el;
-    		return;
-  		}
-  		// Use our mapping to locate the parent element in our data array
-  		const parentEl = data[idMapping[el.category]];
-  		// Add our current el to its parent's `children` array
-  		parentEl.children = [...(parentEl.children || []), el];
-	});
-
-	console.log("root");
-	console.log(root);
-	console.log("child");
-	console.log(root.children);*/
+    //data = Array.from(data, ([key, value]) => ({key,value}));
 
     let d3Container = useRef(null);
 
     useEffect (( ) => {
     	    if(data && d3Container.current) {
-
-    	    	// JSON data
-			    const nodeData = {
-			        "name": "categories", 
-			        "children": [{
-			            			"name": "Project Management",
-			            			"children": [{"name": "Coordinated Meetings", "value": 4}, {"name": "Created Slides", "value": 4}]
-			        			}, {
-			            			"name": "Research",
-			            			"children": [{"name": "Researched related work", "value": 3}, {"name": "Brainstorming", "value": 3}, {"name": "Researched Tools", "value": 3}]
-			        			}, {
-			            			"name": "Data Management",
-			            			"children": [{"name": "Gathered raw data", "value": 4}, {"name": "Processed raw data", "value": 4}]
-			        			}]
-			    };
 
 			    // constiables
 			    const radius = Math.min(width, height) / 2 ;
@@ -114,8 +37,15 @@ const SunburstComponent = ({widthHeightValue = 600, data}) => {
 			        .size([2 * Math.PI, radius]);
 
 			    // Find data root
-			    const dataroot = d3.hierarchy(nodeData)
+			    const dataroot = d3.hierarchy(data)
 			        .sum(function (d) { return d.value});
+
+          const tooltip = d3.select('body') // select element in the DOM with id 'chart'
+              .append('div').classed('tooltip', true); // append a div element to the element we've selected    
+          tooltip.append('div') // add divs to the tooltip defined above 
+              .attr('class', 'name'); // add class 'name' on the selection                
+          tooltip.append('div') // add divs to the tooltip defined above             
+              .attr('class', 'value'); // add class 'value' on the selection
 
 			    // size arcs
 			    partition(dataroot);
@@ -124,10 +54,6 @@ const SunburstComponent = ({widthHeightValue = 600, data}) => {
 			        .endAngle(function (d) { return d.x1 })
 			        .innerRadius(function (d) { return d.y0 })
 			        .outerRadius(function (d) { return d.y1 });
-
-			    const div = d3.select("body").append("div")
-     				.attr("class", "tooltip-donut")
-     				.style("opacity", 0);
 
      			console.log(dataroot.descendants());
 
@@ -141,31 +67,32 @@ const SunburstComponent = ({widthHeightValue = 600, data}) => {
 			        .style('stroke', '#fff')
 			        .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); })
 
-			        .on('mouseenter', function (d, i) {
+			        .on('mouseover', function (d, i) {
           				d3.select(this).transition()
                				.duration('50')
                				.attr('opacity', '.85');
-               			div.transition()
-               				.duration(50)
-               				.style("opacity", 1);
-
+                  tooltip.select('.name').html(i.data.name);
+                  tooltip.select('.value').html(i.data.value / 4 + "h");
+                  tooltip.style('display', 'block');
      				})
 
-     				.on('mouseleave', function (d, i) {
+     				.on('mouseout', function (d, i) {
           				d3.select(this).transition()
                				.duration('50')
                				.attr('opacity', '1');
-               			div.transition()
-               				.duration('50')
-               				.style("opacity", 0);
-    				});
+                  tooltip.style('display', 'none');
+    				})
+            .on('mousemove', function(d) { // when mouse moves                
+                tooltip.style('top', (height / 2) + 'px'); // always 10px below the cursor
+                tooltip.style('left', (width / 2) + 'px'); // always 10px to the right of the mouse
+            });
 
-			    g.selectAll(".node")  // <-- 1
-    				.append("text")  // <-- 2
+			    g.selectAll(".node")
+    				.append("text")
     				.attr("transform", function(d) {
         				return "translate(" + arc.centroid(d) + ")rotate(" + computeTextRotation(d) + ")"; }) // <-- 3
-    				.attr("dx", "0")  // <-- 4
-    				.attr("dy", ".5em")  // <-- 5
+    				.attr("dx", "0")
+    				.attr("dy", ".5em")
     				.style("text-anchor", "middle")
     				.text(function(d) { return d.parent ? d.data.name : "" });  // <-- 6
 

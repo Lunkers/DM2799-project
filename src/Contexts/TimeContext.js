@@ -89,6 +89,7 @@ function TimeProvider(props) {
 
             //for some reason i can't reference the other function, I'll just copy paste to save time lmao
             const groupedReported = Object.fromEntries(d3.rollup(reported, v => d3.sum(v, d=>d.quarters), d => d.task))
+
             const groupedWithName = Object.keys(groupedReported).map(key => (
                 {
                     name: key,
@@ -98,14 +99,20 @@ function TimeProvider(props) {
             // beautiful nested for-loop: O(n^3) is not dangerous
             taskCategories.map(category => {
                 const tasksInCategory = tasks[category]
-                console.log(tasksInCategory)
+                
                 const reportedInCategory = groupedWithName.filter(r => tasksInCategory.includes(r.name))
                 const catRetObj = {
                     "name": category,
+                    "value": 0,
                     "children": reportedInCategory
+                } 
+                if (catRetObj.children.length > 0) { 
+                // It has at least one
+                    catRetObj.value = Object.values(catRetObj.children).reduce((r, { value }) => r + value, 0);
+                    retObj.children = [...retObj.children, catRetObj]
                 }
-                retObj.children = [...retObj.children, catRetObj]
             })
+            console.log(retObj);
             return retObj;
         }
 
