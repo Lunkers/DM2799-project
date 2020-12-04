@@ -1,5 +1,5 @@
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TimeContext } from '../Contexts/TimeContext';
 import { Button, Divider, Table, message, Affix } from 'antd'
 import tasks from '../Data/tasks';
@@ -20,6 +20,11 @@ const ScheduleComponent = () => {
             "Project Management": true,
         }), {})
     )
+
+    // load scheduled times into local state
+    useEffect(() => {
+        setLocalScheduled(scheduled);
+    },[scheduled])
 
     const deliverables = [
         {
@@ -106,7 +111,7 @@ const ScheduleComponent = () => {
     return (<div>
         <div className="container">
             <div className="schedule-container">
-                <h1>Plan your learning for the week</h1>
+                <h1>Which tasks will you work on this week?</h1>
 
                 <TimeContext.Consumer>
                     {({ scheduled, addScheduledTime, removeScheduledTime }) => (
@@ -145,7 +150,7 @@ const ScheduleComponent = () => {
                                                     </span>
                                                 </div>
                                                 {tasks[category].map(task => (
-                                                    <TaskScheduleComponent addTime={onChangeSchedule} task={task} inputHours={getScheduledTimeForTask(task, scheduled)} />
+                                                    <TaskScheduleComponent addTime={onChangeSchedule} task={task} inputHours={getScheduledTimeForTask(task, [ ...localScheduled])} />
                                                 ))}
                                             </div>)}
                                         <Divider />

@@ -103,16 +103,10 @@ function TimeProvider(props) {
                 const reportedInCategory = groupedWithName.filter(r => tasksInCategory.includes(r.name))
                 const catRetObj = {
                     "name": category,
-                    "value": 0,
+                    "value": reportedInCategory ? d3.sum(reportedInCategory, report => report.value): 0,
                     "children": reportedInCategory
                 } 
-                if (catRetObj.children.length > 0) { 
-                // It has at least one
-                    var sum = 0;
-                    catRetObj.value = Object.values(catRetObj.children).forEach((x)=>sum+=x.value)
-                    console.log(catRetObj.value)
-                    retObj.children = [...retObj.children, catRetObj]
-                }
+                if (catRetObj.children.length > 0) retObj.children = [...retObj.children, catRetObj]
             })
             console.log(retObj);
             return retObj;

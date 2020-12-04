@@ -16,7 +16,6 @@ const LoadingBarComponent = ({ data, stacked = false, text }) => {
     useEffect(() => {
         //avoid null pointers
         if (data && loadingBarContainer.current) {
-            console.log(data)
             const scheduledData = data.scheduled;
             const reportedData = data.reported
 
@@ -26,28 +25,31 @@ const LoadingBarComponent = ({ data, stacked = false, text }) => {
                 .append('svg')
                 .attr("width", width)
                 .attr("height", height)
+                .append('g')
+                .attr("transform", `translate(${margin.left}, 0)`)
             
 
             const scale = d3.scaleLinear()
-                .domain([0, d3.max([scheduledData, reportedData]) + 2])
-                .range([margin.left, width - margin.right])
+                .domain([0, d3.max([scheduledData, reportedData])]).nice()
+                .range([0, width - margin.right - margin.left])
 
-            console.log(scale.domain()[1])
+            console.log(scale(scale.domain()[1]))
             console.log('drawing larger bar')
             const backgroundBar = svg
+                .data([scheduledData])
                 .append('rect')
                 .attr("class", "background-rect")
-                .attr('x', scale(scale.domain()[0]))
+                .attr('x', scale(0))
                 .attr('y', margin.top)
                 .attr('height', height -  2 * margin.bottom - margin.top)
-                .attr('width', scale(scale.domain()[1]))
+                .attr('width', d => scale(d))
                 .style('fill', '#232931')
 
             const smallerBar = svg.selectAll(null)
                 .data([reportedData])
                 .enter()
                 .append('rect')
-                .attr('x', scale(scale.domain()[0]))
+                .attr('x', scale(0))
                 .attr('y', margin.top)
                 .attr('height', height - 2*margin.bottom - margin.top)
                 .attr('width', d => scale(d))
