@@ -62,7 +62,15 @@ const SunburstComponent = ({widthHeightValue = 600, data}) => {
           				d3.select(this).transition()
                				.duration('50')
                				.attr('opacity', '.85');
-                  d3.selectAll(".center_text").text(i.data.value / 4 + "h")
+                  var name;
+                  var sum;
+                  console.log(i.data);
+                  if(i.data.children.length > 0) { sum = (i.data.children ? d3.sum(i.data.children, sum => sum.value): 0); name = i.data.name; }
+                  else { sum = i.data.value; name = i.parent.data.name; }
+                  d3.selectAll(".center_text_title").text(name)
+                        .style("font-size", "15px")
+                        .style("font-weight", 400);
+                  d3.selectAll(".center_text").text(sum / 4 + "h")
                         .style("font-size", "30px")
                         .style("font-weight", 750);
      				})
@@ -72,6 +80,7 @@ const SunburstComponent = ({widthHeightValue = 600, data}) => {
                				.duration('50')
                				.attr('opacity', '1');
                   d3.selectAll(".center_text").text("");
+                  d3.selectAll(".center_text_title").text("");
     				});
 
 			    g.selectAll(".node")
@@ -87,6 +96,14 @@ const SunburstComponent = ({widthHeightValue = 600, data}) => {
             .append("text")
             .attr('class', 'center_text')
             .style("text-anchor", "middle")
+            .attr('y', 20)
+            .text("");
+
+          g.selectAll("g")
+            .append("text")
+            .attr('class', 'center_text_title')
+            .style("text-anchor", "middle")
+            .attr('y', -20)
             .text("");
 
     			function computeTextRotation(d) {

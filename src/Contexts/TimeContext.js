@@ -93,7 +93,8 @@ function TimeProvider(props) {
             const groupedWithName = Object.keys(groupedReported).map(key => (
                 {
                     name: key,
-                    value: groupedReported[key]
+                    value: groupedReported[key],
+                    children: []
                 }
             ))
             // beautiful nested for-loop: O(n^3) is not dangerous
@@ -103,9 +104,10 @@ function TimeProvider(props) {
                 const reportedInCategory = groupedWithName.filter(r => tasksInCategory.includes(r.name))
                 const catRetObj = {
                     "name": category,
-                    "value": reportedInCategory ? d3.sum(reportedInCategory, report => report.value): 0,
+                    //"value": reportedInCategory ? d3.sum(reportedInCategory, report => report.value): 0,
                     "children": reportedInCategory
                 } 
+                console.log(reportedInCategory);
                 if (catRetObj.children.length > 0) retObj.children = [...retObj.children, catRetObj]
             })
             console.log(retObj);
