@@ -7,4 +7,5 @@
 
 .pie-container {
     max-height: 10rem;
+    pointer-events: visiblePainted;
 }

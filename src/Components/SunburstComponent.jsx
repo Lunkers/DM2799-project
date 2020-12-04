@@ -11,8 +11,6 @@ const SunburstComponent = ({widthHeightValue = 600, data}) => {
 	  const width = widthHeightValue - margin.left - margin.right - margin.top;
     const height = widthHeightValue - margin.top - margin.bottom;
 
-    //data = Array.from(data, ([key, value]) => ({key,value}));
-
     let d3Container = useRef(null);
 
     useEffect (( ) => {
@@ -40,13 +38,6 @@ const SunburstComponent = ({widthHeightValue = 600, data}) => {
 			    const dataroot = d3.hierarchy(data)
 			        .sum(function (d) { return d.value});
 
-          const tooltip = d3.select('body') // select element in the DOM with id 'chart'
-              .append('div').classed('tooltip', true); // append a div element to the element we've selected    
-          tooltip.append('div') // add divs to the tooltip defined above 
-              .attr('class', 'name'); // add class 'name' on the selection                
-          tooltip.append('div') // add divs to the tooltip defined above             
-              .attr('class', 'value'); // add class 'value' on the selection
-
 			    // size arcs
 			    partition(dataroot);
 			    const arc = d3.arc()
@@ -67,34 +58,36 @@ const SunburstComponent = ({widthHeightValue = 600, data}) => {
 			        .style('stroke', '#fff')
 			        .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); })
 
-			        .on('mouseover', function (d, i) {
+			        .on('mouseenter', function (d, i) {
           				d3.select(this).transition()
                				.duration('50')
                				.attr('opacity', '.85');
-                  tooltip.select('.name').html(i.data.name);
-                  tooltip.select('.value').html(i.data.value / 4 + "h");
-                  tooltip.style('display', 'block');
+                  d3.selectAll(".center_text").text(i.data.value / 4 + "h")
+                        .style("font-size", "30px")
+                        .style("font-weight", 750);
      				})
 
-     				.on('mouseout', function (d, i) {
+     				.on('mouseleave', function (d, i) {
           				d3.select(this).transition()
                				.duration('50')
                				.attr('opacity', '1');
-                  tooltip.style('display', 'none');
-    				})
-            .on('mousemove', function(d) { // when mouse moves                
-                tooltip.style('top', (height / 2) + 'px'); // always 10px below the cursor
-                tooltip.style('left', (width / 2) + 'px'); // always 10px to the right of the mouse
-            });
+                  d3.selectAll(".center_text").text("");
+    				});
 
 			    g.selectAll(".node")
     				.append("text")
     				.attr("transform", function(d) {
-        				return "translate(" + arc.centroid(d) + ")rotate(" + computeTextRotation(d) + ")"; }) // <-- 3
+        				return "translate(" + arc.centroid(d) + ")rotate(" + computeTextRotation(d) + ")"; })
     				.attr("dx", "0")
     				.attr("dy", ".5em")
     				.style("text-anchor", "middle")
-    				.text(function(d) { return d.parent ? d.data.name : "" });  // <-- 6
+    				.text(function(d) { return d.parent ? d.data.name : "" });
+
+          g.selectAll("g")
+            .append("text")
+            .attr('class', 'center_text')
+            .style("text-anchor", "middle")
+            .text("");
 
     			function computeTextRotation(d) {
         			const angle = (d.x0 + d.x1) / Math.PI * 90;
