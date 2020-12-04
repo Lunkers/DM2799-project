@@ -18,6 +18,7 @@ const VizComponent = () => {
                             <div className="viz-container">
                                 
                                 <div className="pie-container">
+                                    <h2>Task Distribution</h2>
                                     <SunBurst data={getCategoryGroupedTaskTimes()} />
                                 </div>
                                 <div className="loading-container">
